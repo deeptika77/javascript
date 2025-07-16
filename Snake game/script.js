@@ -1,6 +1,7 @@
 const container=document.getElementById("gamecontainer")
 const gridSize=20
 const containerSize=400
+let score=0
 let snake=[{ x:200,y:200}]
 // snake suruma coordinates 200,200 bata start huncha
 let direction={x:0,y:0}
@@ -33,6 +34,9 @@ function gameloop(){
         // head.x<0 bhaneko left wall head.x>=containerSize == right wall head.y<o == top wall ani head.y>=containerSize== bottom wall 
         alert("Game Over")
         clearInterval(gameInterval)
+        score=0
+        document.getElementById("score").innerText=score
+        
         return
         // snake ko head le container ko boundary ma choyoo bhane game over bhanera alert aaucha ani onterval clear huncha
     }
@@ -40,6 +44,8 @@ function gameloop(){
     // unshift rakhesi snake ko head ko respect ma body ni move garcha 
     if(head.x==food.x && head.y==food.y){
         food=generateFood()
+        score++
+        document.getElementById("score").innerText=score
         // snake ko head ko coordinate ra food ko coordinates match garyo bhane generatefood bhanni function chalcha ie naya food generate huncha
     }
     else{
@@ -49,6 +55,7 @@ function gameloop(){
         
         
     }
+    draw()
 }
 function draw(){
     container.innerHTML=''
@@ -57,12 +64,42 @@ function draw(){
         snakePart.classList.add('snake')
         // .classList.add le chai tyo dic ko name snake rakhcha js ma yesari garnu parcha
         snakePart.style.left=segment.x+"px"
-        snakePart.style.top=segment.x+"px"
+        snakePart.style.top=segment.y+"px"
         // yesle aghadi snake bhanni section lai style garya cha internal css ma teslai implement garya ho snake part
+        snakePart.style.position='absolute'
 
         container.appendChild(snakePart)
         // snakePart lai container ma append garaucha ie same div bhitra halcha 
 
     })
+     // Draw the food
+    const foodElement = document.createElement("div")
+    foodElement.classList.add('food')
+    foodElement.style.left = food.x + "px"
+    foodElement.style.top = food.y + "px"
+    foodElement.style.position = 'absolute'
+    container.appendChild(foodElement)
 }
+
+
+
+function generateFood(){
+    const x = Math.floor(Math.random()*(containerSize / gridSize)) * gridSize
+    const  y = Math.floor(Math.random()*(containerSize / gridSize)) * gridSize
+    return {x,y}
+}
+
+draw()
+document.getElementById("resetBtn").addEventListener("click", () => {
+    clearInterval(gameInterval)
+    snake = [{ x: 200, y: 200 }]
+    direction = { x: 0, y: 0 }
+    score = 0
+    document.getElementById("score").innerText = score
+    food = generateFood()
+    gameInterval = setInterval(gameloop, 150)
+    draw()
+});
+
+
 
